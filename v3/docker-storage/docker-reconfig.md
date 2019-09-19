@@ -20,15 +20,12 @@ For each node in the cluster.
 - Start and enable the node service.
 - Mark the node as schedulable.
 
-Login with cluster-admin privileges and mark the node as not schedulable.
+Login with cluster-admin privileges.
 ```
 $ oc login https://api-server-url -u admin
 ```
-```
-$ oc adm manage-node <node> --schedulable=false
-```
 
-Drain off the running pods.
+Mark the node as not schedulable and drain off the running pods.
 ```
 $ oc adm drain <node> --force=true --ignore-daemonsets=true
 ```
@@ -51,7 +48,7 @@ Remove the old docker directory.
 ```
 # rm -rf /var/lib/docker
 ```
-If removing ```/var/lib/docker``` fails with a ```device busy``` error, reboot the node.
+If removing ```/var/lib/docker``` fails with a ```device busy``` error or ```/var/lib/origin``` directories fail to unmount, reboot the node.
 
 Remove the old docker storage configuration.
 
@@ -129,12 +126,12 @@ Start and enable the node service.
 # systemctl enable atomic-openshift-node
 ```
 
-Run ```docker ps``` and notice the control plane pods are running.
+Run ```docker ps``` and notice the control plane pods are running (master only).
 
 Mark the node as schedulable.
 
 ```
-$ oc adm manage-node <node> --schedulable=true
+$ oc adm uncordon <node>
 
 NAME                             STATUS    ROLES     AGE       VERSION
 ip-172-33-112-116.ec2.internal   Ready     master    53m       v1.11.0+d4cacc0
