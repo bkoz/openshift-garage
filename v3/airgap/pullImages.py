@@ -73,13 +73,17 @@ baseImageSet = ['/openshift3/apb-base',
 '/openshift3/ose-logging-kibana5',
 '/openshift3/prometheus',
 '/openshift3/prometheus-alertmanager',
-'/openshift3/prometheus-node-exporter',
+'/openshift3/prometheus-node-exporter']
+
+baseTags = ['v3.11.153', 'v3.11', 'latest']
+
+storageImageSet =[
 '/rhgs3/rhgs-server-rhel7',
 '/rhgs3/rhgs-volmanager-rhel7',
 '/rhgs3/rhgs-gluster-block-prov-rhel7',
 '/rhgs3/rhgs-s3-server-rhel7']
 
-baseTags = ['v3.11.153', 'v3.11', 'latest']
+storageImageTags = ['v3.11', 'latest']
 
 additionalImageSet = ['/rhel7/etcd:3.2.22']
 
@@ -98,6 +102,7 @@ for tag in baseTags[0:1]:
         else:
             subprocess.call(command)
         del command
+
 # Pull the addtionalImageSet
 for image in additionalImageSet:
     command = []
@@ -110,6 +115,21 @@ for image in additionalImageSet:
         subprocess.call(command)
 
     del command
+
+# Pull the storageImageSet
+cmd = "pull"
+for tag in storageImageTags[0:1]:
+    for image in storageImageSet:
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(srcRegistry+image+":"+tag)
+        if dryRun:
+            print(command)
+        else:
+            subprocess.call(command)
+        del command
+
 # Pull the publicImageSet
 for image in publicImageSet:
     command = []
@@ -137,12 +157,28 @@ for tag in baseTags[0:1]:
         else:
             subprocess.call(command)
         del command
+
+# Tag the storageImageSet for the destination registry
+cmd = "tag"
+for tag in storageImageTags[0:1]:
+    for image in storageImageSet:
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(srcRegistry+image+":"+tag)
+        command.append(destRegistry+image+":"+tag)
+        if dryRun:
+            print(command)
+        else:
+            subprocess.call(command)
+        del command
+
 # Tag the additional images for the destination registry.
 for image in additionalImageSet:
     command = []
     command.append(engine)
     command.append(cmd)
-    command.append(srcRegistry+image+":"+tag)
+    command.append(srcRegistry+image)
     command.append(destRegistry+image)
     if dryRun:
         print(command)
@@ -150,6 +186,7 @@ for image in additionalImageSet:
         subprocess.call(command)
 
     del command
+
 # Tag the public images for the destination registry.
 for image in publicImageSet:
     command = []
@@ -174,13 +211,48 @@ for tag in baseTags[0:1]:
         command.append(cmd)
         command.append(destRegistry+image+":"+tag)
         command.append('-o')
-        command.append(exportDir+filename[2])
+        command.append(exportDir+filename[2]+'.tar')
         if dryRun:
             print(command)
         else:
             subprocess.call(command)
 
         del command
+
+# Save the storageImageSet to tar files.
+cmd = "save"
+for tag in storageImageTags[0:1]:
+    for image in storageImageSet:
+        filename = image.split('/')
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(destRegistry+image+":"+tag)
+        command.append('-o')
+        command.append(exportDir+filename[2]+'.tar')
+        if dryRun:
+            print(command)
+        else:
+            subprocess.call(command)
+
+        del command
+
+# Save the additional images to tar files.
+for image in additionalImageSet:
+    filename = image.split('/')
+    command = []
+    command.append(engine)
+    command.append(cmd)
+    command.append(destRegistry+image)
+    command.append('-o')
+    command.append(exportDir+filename[2]+'.tar')
+    if dryRun:
+        print(command)
+    else:
+        subprocess.call(command)
+
+    del command
+
 # Save the public images. A hack.
 tmp = publicImageSet[0].split('/')
 filename = tmp[1].split(':')
@@ -202,7 +274,7 @@ filename = tmp[2]
 command = []
 command.append(engine)
 command.append(cmd)
-command.append(destRegistry+publicImageSet[0])
+command.append(destRegistry+publicImageSet[1])
 command.append('-o')
 command.append(exportDir+filename+'.tar')
 if dryRun:
