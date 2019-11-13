@@ -1,9 +1,11 @@
-dryRun = True
+import subprocess
+
+dryRun = False
 engine = "docker"
 srcRegistry = "registry.redhat.io"
 destRegistry = "reg.koz-airgap.redhatgov.io:5000"
 dockerHub = "docker.io"
-exportDir = "/export/images/"
+exportDir = "/storage/export/images/"
 
 baseImageSet = ['/openshift3/apb-base',
 '/openshift3/apb-tools',
@@ -77,7 +79,7 @@ baseImageSet = ['/openshift3/apb-base',
 '/rhgs3/rhgs-gluster-block-prov-rhel7',
 '/rhgs3/rhgs-s3-server-rhel7']
 
-baseTags = ['v3.11.146', 'v3.11', 'latest']
+baseTags = ['v3.11.153', 'v3.11', 'latest']
 
 additionalImageSet = ['/rhel7/etcd:3.2.22']
 
@@ -87,62 +89,125 @@ publicImageSet = [ '/registry:2', '/openshift/hello-openshift:latest' ]
 cmd = "pull"
 for tag in baseTags[0:1]:
     for image in baseImageSet:
-        command = "['{}', '{}', '{}{}:{}']".format(engine, cmd, srcRegistry, image, tag)
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(srcRegistry+image+":"+tag)
         if dryRun:
             print(command)
-
+        else:
+            subprocess.call(command)
+        del command
 # Pull the addtionalImageSet
 for image in additionalImageSet:
-    command = "['{}', '{}', '{}{}']".format(engine, cmd, srcRegistry, image)
+    command = []
+    command.append(engine)
+    command.append(cmd)
+    command.append(srcRegistry+image)
     if dryRun:
         print(command)
+    else:
+        subprocess.call(command)
 
+    del command
 # Pull the publicImageSet
 for image in publicImageSet:
-    command = "['{}', '{}', '{}{}']".format(engine, cmd, dockerHub, image)
+    command = []
+    command.append(engine)
+    command.append(cmd)
+    command.append(dockerHub+image)
     if dryRun:
         print(command)
-
+    else:
+        subprocess.call(command)
+    
+    del command
 
 # Tag for the destination registry
 cmd = "tag"
 for tag in baseTags[0:1]:
     for image in baseImageSet:
-        command = "['{}', '{}', '{}{}:{}', '{}{}:{}']".format(engine, cmd, srcRegistry, image, tag, destRegistry, image, tag)
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(srcRegistry+image+":"+tag)
+        command.append(destRegistry+image+":"+tag)
         if dryRun:
             print(command)
-
+        else:
+            subprocess.call(command)
+        del command
 # Tag the additional images for the destination registry.
 for image in additionalImageSet:
-    command = "['{}', '{}', '{}{}:{}', '{}{}']".format(engine, cmd, srcRegistry, image, tag, destRegistry, image)
+    command = []
+    command.append(engine)
+    command.append(cmd)
+    command.append(srcRegistry+image+":"+tag)
+    command.append(destRegistry+image)
     if dryRun:
         print(command)
+    else:
+        subprocess.call(command)
 
+    del command
 # Tag the public images for the destination registry.
 for image in publicImageSet:
-    command = "['{}', '{}', '{}{}', '{}{}']".format(engine, cmd, dockerHub, image, destRegistry, image)
+    command = []
+    command.append(engine)
+    command.append(cmd)
+    command.append(dockerHub+image)
+    command.append(destRegistry+image)
     if dryRun:
         print(command)
+    else:
+        subprocess.call(command)
 
+    del command
 
 # Save to tar files.
 cmd = "save"
 for tag in baseTags[0:1]:
     for image in baseImageSet:
         filename = image.split('/')
-        command = "['{}', '{}', '{}{}:{}', '-o', '{}{}.tar']".format(engine, cmd, destRegistry, image, tag, exportDir, filename[2])
+        command = []
+        command.append(engine)
+        command.append(cmd)
+        command.append(destRegistry+image+":"+tag)
+        command.append('-o')
+        command.append(exportDir+filename[2])
         if dryRun:
             print(command)
+        else:
+            subprocess.call(command)
 
+        del command
 # Save the public images. A hack.
 tmp = publicImageSet[0].split('/')
 filename = tmp[1].split(':')
-command = "['{}', '{}', '{}{}', '-o', '{}{}.tar']".format(engine, cmd, destRegistry, publicImageSet[0], exportDir, filename[0])
+command = []
+command.append(engine)
+command.append(cmd)
+command.append(destRegistry+publicImageSet[0])
+command.append('-o')
+command.append(exportDir+filename[0]+'.tar')
 if dryRun:
     print(command)
+else:
+    subprocess.call(command)
+
+del command
 
 tmp = publicImageSet[1].split('/')
 filename = tmp[2]
-command = "['{}', '{}', '{}{}', '-o', '{}{}.tar']".format(engine, cmd, destRegistry, publicImageSet[1], exportDir, filename)  
+command = []
+command.append(engine)
+command.append(cmd)
+command.append(destRegistry+publicImageSet[0])
+command.append('-o')
+command.append(exportDir+filename+'.tar')
 if dryRun:
     print(command)
+else:
+    subprocess.call(command)
+
+del command
