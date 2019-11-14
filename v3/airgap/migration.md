@@ -15,11 +15,11 @@ This example assumes the airgapped cluster can access and pull an images from a 
 
 2) Tag it for the destination registry.
 
-```docker tag docker.io/openshift/hello-openshift reg.koz-airgap.redhatgov.io:5000/hello-openshift```
+```docker tag docker.io/openshift/hello-openshift reg.koz.redhatgov.io:5000/hello-openshift```
 
 3) Save the image to a storage device that can be moved to the airgapped environment.
 
-```docker save reg.koz-airgap.redhatgov.io:5000/hello-openshift -o image-archive.tar```
+```docker save reg.koz.redhatgov.io:5000/hello-openshift -o image-archive.tar```
 
 4) Load the image that was saved.
 
@@ -27,14 +27,14 @@ This example assumes the airgapped cluster can access and pull an images from a 
 
 5) Push to the destination registry.
 
-```docker push reg.koz-airgap.redhatgov.io:5000/hello-openshift```
+```docker push reg.koz.redhatgov.io:5000/hello-openshift```
 
 6) Login to OpenShift, create a project and a new application.
 
 ```
 $ oc login
 $ oc new-project hello
-$ oc new-app --insecure-registry=true reg.koz-airgap.redhatgov.io:5000/hello-openshift
+$ oc new-app --insecure-registry=true reg.koz.redhatgov.io:5000/hello-openshift
 ```
 
 Check the pod is running.
@@ -56,5 +56,5 @@ $ curl $HELLO_ROUTE
 Skopeo inspect test.
 
 ```
-$ skopeo inspect docker://reg.koz-airgap.redhatgov.io:5000/hello-openshift
+$ skopeo inspect docker://reg.koz.redhatgov.io:5000/hello-openshift
 ```
