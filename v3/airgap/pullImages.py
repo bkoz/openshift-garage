@@ -1,6 +1,10 @@
+#
+# Pull, tag and save OpenShift v3.11 images.
+#
+
 import subprocess
 
-dryRun = False
+dryRun = True
 engine = "docker"
 srcRegistry = "registry.redhat.io"
 destRegistry = "reg.koz-airgap.redhatgov.io:5000"
@@ -89,176 +93,128 @@ additionalImageSet = ['/rhel7/etcd:3.2.22']
 
 publicImageSet = [ '/registry:2', '/openshift/hello-openshift:latest' ]
 
-# Pull the main image tag
-cmd = "pull"
+# Process the baseImageSet
 for tag in baseTags[0:1]:
     for image in baseImageSet:
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(srcRegistry+image+":"+tag)
-        if dryRun:
-            print(command)
-        else:
-            subprocess.call(command)
-        del command
-
-# Pull the addtionalImageSet
-for image in additionalImageSet:
-    command = []
-    command.append(engine)
-    command.append(cmd)
-    command.append(srcRegistry+image)
-    if dryRun:
-        print(command)
-    else:
-        subprocess.call(command)
-
-    del command
-
-# Pull the storageImageSet
-cmd = "pull"
-for tag in storageImageTags[0:1]:
-    for image in storageImageSet:
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(srcRegistry+image+":"+tag)
-        if dryRun:
-            print(command)
-        else:
-            subprocess.call(command)
-        del command
-
-# Pull the publicImageSet
-for image in publicImageSet:
-    command = []
-    command.append(engine)
-    command.append(cmd)
-    command.append(dockerHub+image)
-    if dryRun:
-        print(command)
-    else:
-        subprocess.call(command)
-    
-    del command
-
-# Tag for the destination registry
-cmd = "tag"
-for tag in baseTags[0:1]:
-    for image in baseImageSet:
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(srcRegistry+image+":"+tag)
-        command.append(destRegistry+image+":"+tag)
-        if dryRun:
-            print(command)
-        else:
-            subprocess.call(command)
-        del command
-
-# Tag the storageImageSet for the destination registry
-cmd = "tag"
-for tag in storageImageTags[0:1]:
-    for image in storageImageSet:
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(srcRegistry+image+":"+tag)
-        command.append(destRegistry+image+":"+tag)
-        if dryRun:
-            print(command)
-        else:
-            subprocess.call(command)
-        del command
-
-# Tag the additional images for the destination registry.
-for image in additionalImageSet:
-    command = []
-    command.append(engine)
-    command.append(cmd)
-    command.append(srcRegistry+image)
-    command.append(destRegistry+image)
-    if dryRun:
-        print(command)
-    else:
-        subprocess.call(command)
-
-    del command
-
-# Tag the public images for the destination registry.
-for image in publicImageSet:
-    command = []
-    command.append(engine)
-    command.append(cmd)
-    command.append(dockerHub+image)
-    command.append(destRegistry+image)
-    if dryRun:
-        print(command)
-    else:
-        subprocess.call(command)
-
-    del command
-
-# Save to tar files.
-cmd = "save"
-for tag in baseTags[0:1]:
-    for image in baseImageSet:
+        pullCommand = []
+        pullCommand.append(engine)
+        pullCommand.append('pull')
+        pullCommand.append(srcRegistry+image+":"+tag)
+        tagCommand = []
+        tagCommand.append(engine)
+        tagCommand.append('tag')
+        tagCommand.append(srcRegistry+image+":"+tag)
+        tagCommand.append(destRegistry+image+":"+tag)
         filename = image.split('/')
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(destRegistry+image+":"+tag)
-        command.append('-o')
-        command.append(exportDir+filename[2]+'.tar')
+        saveCommand = []
+        saveCommand.append(engine)
+        saveCommand.append('save')
+        saveCommand.append(destRegistry+image+":"+tag)
+        saveCommand.append('-o')
+        saveCommand.append(exportDir+filename[2]+'.tar')
+ 
         if dryRun:
-            print(command)
+            print(pullCommand)
+            print(tagCommand)
+            print(saveCommand)
         else:
-            subprocess.call(command)
+            subprocess.call(pullCommand)
+            subprocess.call(tagCommand)
+            subprocess.call(saveCommand)
+            
+        del pullCommand
+        del tagCommand
+        del saveCommand
 
-        del command
-
-# Save the storageImageSet to tar files.
-cmd = "save"
-for tag in storageImageTags[0:1]:
-    for image in storageImageSet:
-        filename = image.split('/')
-        command = []
-        command.append(engine)
-        command.append(cmd)
-        command.append(destRegistry+image+":"+tag)
-        command.append('-o')
-        command.append(exportDir+filename[2]+'.tar')
-        if dryRun:
-            print(command)
-        else:
-            subprocess.call(command)
-
-        del command
-
-# Save the additional images to tar files.
+# Process the addtionalImageSet
 for image in additionalImageSet:
+    pullCommand = []
+    pullCommand.append(engine)
+    pullCommand.append('pull')
+    pullCommand.append(srcRegistry+image)
+    tagCommand = []
+    tagCommand.append(engine)
+    tagCommand.append('tag')
+    tagCommand.append(srcRegistry+image)
+    tagCommand.append(destRegistry+image)
     filename = image.split('/')
-    command = []
-    command.append(engine)
-    command.append(cmd)
-    command.append(destRegistry+image)
-    command.append('-o')
-    command.append(exportDir+filename[2]+'.tar')
+    saveCommand = []
+    saveCommand.append(engine)
+    saveCommand.append('save')
+    saveCommand.append(destRegistry+image)
+    saveCommand.append('-o')
+    saveCommand.append(exportDir+filename[2]+'.tar')
+
     if dryRun:
-        print(command)
+        print(pullCommand)
+        print(tagCommand)
+        print(saveCommand)
     else:
-        subprocess.call(command)
+        subprocess.call(pullCommand)
+        subprocess.call(tagCommand)
+        subprocess.call(saveCommand)
 
-    del command
+    del pullCommand
+    del tagCommand
+    del saveCommand
 
-# Save the public images. A hack.
+# Process the storageImageSet
+for tag in storageImageTags[0:1]:
+    for image in storageImageSet:
+        pullCommand = []
+        pullCommand.append(engine)
+        pullCommand.append('pull')
+        pullCommand.append(srcRegistry+image+":"+tag)
+        tagCommand = []
+        tagCommand.append(engine)
+        tagCommand.append('tag')
+        tagCommand.append(srcRegistry+image+":"+tag)
+        tagCommand.append(destRegistry+image+":"+tag)
+        saveCommand = []
+        saveCommand.append(engine)
+        saveCommand.append('save')
+        saveCommand.append(destRegistry+image+":"+tag)
+        saveCommand.append('-o')
+        saveCommand.append(exportDir+filename[2]+'.tar')
+        if dryRun:
+            print(pullCommand)
+            print(tagCommand)
+            print(saveCommand)
+        else:
+            subprocess.call(pullCommand)
+            subprocess.call(tagCommand)
+            subprocess.call(saveCommand)
+        del pullCommand
+        del tagCommand
+        del saveCommand
+
+# Process the publicImageSet
+for image in publicImageSet:
+    pullCommand = []
+    pullCommand.append(engine)
+    pullCommand.append('pull')
+    pullCommand.append(dockerHub+image)
+    tagCommand = []
+    tagCommand.append(engine)
+    tagCommand.append('tag')
+    tagCommand.append(dockerHub+image)
+    tagCommand.append(destRegistry+image)
+    if dryRun:
+        print(pullCommand)
+        print(tagCommand)
+    else:
+        subprocess.call(pullCommand)
+        subprocess.call(tagCommand)
+    
+    del pullCommand
+    del tagCommand
+
+# Save the public images. A quick hack.
 tmp = publicImageSet[0].split('/')
 filename = tmp[1].split(':')
 command = []
 command.append(engine)
-command.append(cmd)
+command.append('save')
 command.append(destRegistry+publicImageSet[0])
 command.append('-o')
 command.append(exportDir+filename[0]+'.tar')
@@ -273,7 +229,7 @@ tmp = publicImageSet[1].split('/')
 filename = tmp[2]
 command = []
 command.append(engine)
-command.append(cmd)
+command.append('save')
 command.append(destRegistry+publicImageSet[1])
 command.append('-o')
 command.append(exportDir+filename+'.tar')
