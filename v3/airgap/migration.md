@@ -5,7 +5,7 @@ OpenShift v3.11 installed on RHEL7
 
 This example should work with either ```docker``` or ```podman``` container engine clients. On a RHEL7 system, the ```docker``` commands should be run as ```root```.
 
-This example assumes the airgapped cluster can access and pull an images from a separate insecure registry.
+This example assumes the airgapped cluster nodes can access and pull an images from an external insecure registry. See the ```[registries.insecure]``` section of ```/etc/containers/registries.conf```.
 
 ### Procedure
 
