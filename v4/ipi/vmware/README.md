@@ -18,7 +18,7 @@ the desired release version.
 
 2. Host the RHCOS ova file on a web server that the content server can access.
 
-3. Follow the steps in the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html) up to and including creating an installation configuration file (`install-config.yaml`).
+3. Follow all the steps in the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html) up to and including creating an installation configuration file (`install-config.yaml`).
 
 4. A disconnected install requires the following additional
 parameters be added to the installation configuration file. Refer to the [install-config example template](install-config-template.yaml) for examples.
