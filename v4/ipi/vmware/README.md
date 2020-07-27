@@ -5,7 +5,7 @@
 
 * Follow the documentation to [mirror the OpenShift images](https://docs.openshift.com/container-platform/4.5/installing/install_config/installing-restricted-networks-preparations.html#installing-restricted-networks-preparations) to a local directory.
 
-* Extract the installation binary that matches
+* Follow the documentation to [extract the installation program](https://docs.openshift.com/container-platform/4.5/installing/install_config/installing-restricted-networks-preparations.html#installation-mirror-repository_installing-restricted-networks-preparations) that matches
 the desired release version. 
 
 * Download the RHCOS [ova](https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.5/latest/rhcos-4.5.2-x86_64-vmware.x86_64.ova) image that matches the desired release version.
