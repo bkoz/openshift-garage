@@ -29,4 +29,4 @@ parameters be added to the installation configuration file. Refer to the [instal
 |`platform.vsphere.clusterOSImage`|A URL to the locally hosted RHCOS ova file.|
 |`additionalTrustBundle`|Local registry cert or CA bundle in PEM format|
 
-5. Continue with the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html) to run the installer.
+5. Continue with the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html#installation-launching-installer_installing-vsphere-installer-provisioned-customizations) to run the installer.
