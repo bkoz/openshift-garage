@@ -1,0 +1,57 @@
+apiVersion: v1
+baseDomain: lunchbox.lab
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  platform: {}
+  replicas: 3
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform: {}
+  replicas: 3
+metadata:
+  creationTimestamp: null
+  name: ocp
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.0.0.0/16
+  networkType: OpenShiftSDN
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  vsphere:
+    apiVIP: 192.168.250.50
+    cluster: cluster01
+    datacenter: Datacenter
+    defaultDatastore: datastore1
+    ingressVIP: 192.168.250.51
+    network: VM Network
+    password: mypassword
+    username: administrator@vsphere.local
+    vCenter: vcenter.lunchbox.lab
+    clusterOSImage: http://content.lunchbox.lab:8000/rhcos-4.5.2-x86_64-vmware.x86_64.ova
+publish: External
+pullSecret: '{ "auths": { "content.lunchbox.lab:5000": { "auth": "insert-base64-encoded-credentials", "email": "myemail@email.net" } } }'
+sshKey: |
+  ssh-rsa AAAAAabcd-insert-public-ssh-key-XYZxyz
+additionalTrustBundle: |
+  -----BEGIN CERTIFICATE-----
+  MIIFBzCCAu8CFHdvkX8Lz6imEDpr1FFiJXSw8II9MA0GCSqGSIb3DQEBCwUAMEAx
+  ...
+  ... insert SSL cert
+  ...
+  NeAa6oC8qjw6LQoXj9+QVIGj+W2BJqGKCYczmRPV5Oa4elvpSKSEhIj91w==
+  -----END CERTIFICATE-----
+imageContentSources: 
+- mirrors:
+    - content.lunchbox.lab:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-release
+- mirrors:
+    - content.lunchbox.lab:5000/ocp4/openshift4
+  source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
