@@ -30,6 +30,6 @@ parameters must be added to `install-config.yaml`.
 |`platform.vsphere.clusterOSImage`|http://content.lunchbox.lab:8000/rhcos-4.5.2-x86_64-vmware.x86_64.ova|
 |`additionalTrustBundle`|Registry SSL certificate in PEM format|
 
-Have a look at `install-config-template.yaml` for details.
+Have a look at this [install-config example template](install-config-template.yaml) for details.
 
 * Continue with the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html).
