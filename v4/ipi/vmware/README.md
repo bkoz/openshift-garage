@@ -1,5 +1,5 @@
-# Disconnected OpenShift 4.5.2 IPI install on vCenter
-## (Some assembly required)
+# Disconnected OpenShift 4.5.2 IPI install on vCenter (Some assembly required.)
+##  These are my notes and not a Red Hat supported document.
 
 ### Perform these steps on a RHEL7/8 host connected to the internet.
 
