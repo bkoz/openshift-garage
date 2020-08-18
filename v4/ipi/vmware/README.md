@@ -30,3 +30,5 @@ parameters be added to the installation configuration file. Refer to the [instal
 |`additionalTrustBundle`|Local registry cert or CA bundle in PEM format|
 
 5. Continue with the [IPI install documentation](https://docs.openshift.com/container-platform/4.5/installing/installing_vsphere/installing-vsphere-installer-provisioned-customizations.html#installation-launching-installer_installing-vsphere-installer-provisioned-customizations) to run the installer.
+
+6. Configure [time syncronization](https://docs.openshift.com/container-platform/4.5/installing/install_config/installing-customizing.html#installation-special-config-crony_installing-customizing).
